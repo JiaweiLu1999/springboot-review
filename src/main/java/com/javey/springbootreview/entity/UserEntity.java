@@ -1,5 +1,6 @@
 package com.javey.springbootreview.entity;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,7 @@ import javax.validation.constraints.Size;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonFilter("UserEntityFilter")
 public class UserEntity {
     String id;
 

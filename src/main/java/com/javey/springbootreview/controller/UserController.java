@@ -1,27 +1,42 @@
 package com.javey.springbootreview.controller;
 
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.javey.springbootreview.entity.UserEntity;
+import com.javey.springbootreview.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
+    private final UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
     @GetMapping()
-    public List<UserEntity> getAllUsers() {
-        return new ArrayList<>();
+    public MappingJacksonValue getAllUsers() {
+
+        List<UserEntity> allUsers = userService.getAllUsers();
+        MappingJacksonValue users = new MappingJacksonValue(allUsers);
+        users.setFilters(new SimpleFilterProvider().addFilter("UserEntityFilter",
+                SimpleBeanPropertyFilter.filterOutAllExcept("id", "name")));
+        return users;
     }
 
     @PostMapping()
     public ResponseEntity<String> addUser(@Valid @RequestBody UserEntity user) {
-        System.out.println(user);
         return new ResponseEntity<>("ok", HttpStatus.OK);
     }
 
